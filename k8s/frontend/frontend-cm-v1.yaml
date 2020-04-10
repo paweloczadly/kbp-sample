@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frontend-config-v1
+  namespace: pawel
+data:
+  journalEntries: "10"

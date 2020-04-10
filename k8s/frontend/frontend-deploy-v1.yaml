@@ -1,0 +1,46 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  labels:
+    run: frontend-v1
+  name: frontend-v1
+  namespace: pawel
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      run: frontend-v1
+  template:
+    metadata:
+      labels:
+        run: frontend-v1
+    spec:
+      containers:
+      - env:
+        - name: JOURNAL_ENTRIES
+          valueFrom:
+            configMapKeyRef:
+              name: frontend-config-v1
+              key: journalEntries
+        image: brendanburns/journal-server:latest
+        imagePullPolicy: Always
+        name: frontend-v1
+        resources:
+          limits:
+            cpu: "1.0"
+            memory: "1G"
+          requests:
+            cpu: "1.0"
+            memory: "1G"
+        terminationMessagePath: /dev/termination-log
+        terminationMessagePolicy: File
+        volumeMounts:
+        - mountPath: /etc/redis-passwd
+          name: passwd-volume
+          readOnly: true
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      volumes:
+      - name: passwd-volume
+        secret:
+          secretName: redis-passwd-v1
